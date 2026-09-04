@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { UserService} from './users.service'
-import { type  CreateUserInput, type UpdateUserInput} from './users.service'
+import { UserService} from './users.service.js'
+import { type  CreateUserInput, type UpdateUserInput} from './users.service.js'
 
 export class UserController {
     constructor(private readonly userService: UserService){}

@@ -1,4 +1,4 @@
-import { prisma } from '../../lib/prisma';
+import { prisma } from '../../lib/prisma.js';
 export class UserService {
     getAll = async () => {
         return prisma.user.findMany();

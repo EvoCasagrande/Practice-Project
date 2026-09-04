@@ -9,7 +9,7 @@
   "scripts": {
     "build": "if exist dist rmdir /s /q dist && tsc",
     "start": "node dist/src/server.js",
-    "dev": "tsc --watch",
+    "dev": "tsx watch src/server.ts",
     "postinstall": "prisma skills sync || exit 0"
   },
   "devDependencies": {
@@ -17,6 +17,7 @@
     "@types/node": "^26.4.1",
     "@types/pg": "^8.23.1",
     "prisma": "^7.10.0",
+    "tsx": "^4.23.13",
     "typescript": "^7.0.2"
   },
   "dependencies": {

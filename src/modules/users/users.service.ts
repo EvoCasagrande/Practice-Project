@@ -1,5 +1,5 @@
-import type { UserModel as User} from "../../../generated/prisma/models";
-import { prisma } from '../../lib/prisma'
+import type { UserModel as User} from "../../../generated/prisma/models.js";
+import { prisma } from '../../lib/prisma.js'
 
 export type CreateUserInput = {
     name: string,
