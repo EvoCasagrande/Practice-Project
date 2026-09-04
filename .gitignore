@@ -1,0 +1,6 @@
+node_modules/
+.env
+.env.*
+
+# Prisma Client generado
+/generated/prisma/
