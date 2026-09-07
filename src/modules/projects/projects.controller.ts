@@ -1,5 +1,4 @@
-import { promiseHooks } from 'node:v8';
-import { CreateProjectInput, UpdateProjectInput, ProjectService } from './projects.service.js';
+import type { CreateProjectInput, UpdateProjectInput, ProjectService } from './projects.service.js';
 import { Request, Response } from 'express';
 
 export class ProjectController {
@@ -47,5 +46,50 @@ export class ProjectController {
         }
     }
 
-    create = async(req: Request<{}, {}, CreateProjectInput>, res: Response): Promise<void>
+    create = async(req: Request<{}, {}, CreateProjectInput>, res: Response): Promise<void> => {
+        try {
+            const project = await this.projectService.create(req.body);
+
+            res.status(201).json({
+                status: 'success',
+                project
+            });
+        } catch {
+            res.status(500).json({
+                status: 'error',
+                message: 'Ocurrio un error en la operacion.'
+            });
+        }
+    }
+
+    update = async(req: Request<{ id: string }, {}, UpdateProjectInput>, res: Response): Promise<void> => {
+        try {
+            const id = Number(req.params.id);
+            const project = await this.projectService.update(id, req.body);
+
+            res.status(200).json({
+                status: 'success',
+                project
+            })
+        } catch {
+            res.status(500).json({
+                status: 'error',
+                message: 'Ocurrio un error en la operacion.'
+            })
+        }
+    }
+
+    delete = async(req: Request<{ id: string }>, res: Response): Promise<void> => {
+        try {
+            const id = Number(req.params.id);
+            await this.projectService.delete(id);
+
+            res.status(204).send();
+        } catch {
+            res.status(500).json({
+                status: 'error',
+                message: 'Ocurrio un error en la operacion.'
+            })
+        }
+    }
 }

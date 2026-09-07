@@ -32,7 +32,7 @@ export class ProjectService {
         return prisma.project.findUnique({
             where: { id },
             include: {
-            user: true,
+                user: true,
             },
         });
     };
@@ -55,7 +55,7 @@ export class ProjectService {
         });
     };
 
-    patch = async (id: number, data: UpdateProjectInput): Promise<ProjectWithUser> => {
+    update = async (id: number, data: UpdateProjectInput): Promise<ProjectWithUser> => {
         return prisma.project.update({
             where: { id },
             data: {
