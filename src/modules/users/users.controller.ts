@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { UserService} from './users.service.js'
-import { type  CreateUserInput, type UpdateUserInput} from './users.service.js'
+import { type  CreateUserInput, type UpdateUserInput, UserService } from './users.service.js'
 
 export class UserController {
     constructor(private readonly userService: UserService){}
@@ -17,7 +16,7 @@ export class UserController {
         } catch {
             res.status(500).json({
                 status: 'error',
-                message: 'Hubo un error en la operacion.'
+                message: 'Ocurrio un error en la operacion.'
             })
         }
     }
@@ -42,7 +41,7 @@ export class UserController {
         } catch {
             res.status(500).json({
                 status: 'error',
-                message: 'Hubo un error en la operacion.'
+                message: 'Ocurrio un error en la operacion.'
             })
         }
     }

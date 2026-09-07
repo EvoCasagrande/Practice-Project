@@ -1,1 +1,1 @@
-{"version":3,"file":"projects.routes.js","sourceRoot":"","sources":["../../../../src/modules/projects/projects.routes.ts"],"names":[],"mappings":""}
+{"version":3,"file":"projects.routes.js","sourceRoot":"","sources":["../../../../src/modules/projects/projects.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAEjC,MAAM,MAAM,GAAG,MAAM,EAAE,CAAC;AAExB,MAAM;IACF,KAAK,CAAC,GAAG,CAAC;IACV,GAAG,EAAE;IACL,IAAI,EAAE,CAAC;AAEX,MAAM;IACF,KAAK,CAAC,MAAM,CAAC;IACb,GAAG,EAAE;IACL,KAAK,EAAE;IACP,MAAM,EAAE,CAAA;AAEZ,eAAe,MAAM,CAAC"}
