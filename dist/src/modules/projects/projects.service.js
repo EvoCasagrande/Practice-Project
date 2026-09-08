@@ -20,32 +20,24 @@ export class ProjectService {
             data: {
                 name: data.name,
                 description: data.description,
-                user: {
-                    connect: {
-                        id: data.userId,
-                    },
-                },
+                userId: data.userId
             },
             include: {
                 user: true,
             },
         });
     };
-    patch = async (id, data) => {
+    update = async (id, data) => {
         return prisma.project.update({
             where: { id },
             data: {
                 name: data.name,
                 description: data.description,
-                user: data.userId !== undefined
-                    ? {
-                        connect: {
-                            id: data.userId,
-                        },
-                    }
-                    : undefined,
+                userId: data.userId
             },
-            include: { user: true },
+            include: {
+                user: true
+            },
         });
     };
     delete = async (id) => {

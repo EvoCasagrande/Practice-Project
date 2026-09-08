@@ -21,10 +21,10 @@ export class ProjectController {
         }
     }
 
-    getById = async(req: Request<{ id: string }>, res: Response): Promise<void> => {
+    getById = async(req: Request<{ projectId: string }>, res: Response): Promise<void> => {
         try {
-            const id = Number(req.params.id);
-            const project = await this.projectService.getById(id);
+            const projectId = Number(req.params.projectId);
+            const project = await this.projectService.getById(projectId);
 
             if(!project) {
                 res.status(404).json({
@@ -62,10 +62,10 @@ export class ProjectController {
         }
     }
 
-    update = async(req: Request<{ id: string }, {}, UpdateProjectInput>, res: Response): Promise<void> => {
+    update = async(req: Request<{ projectId: string }, {}, UpdateProjectInput>, res: Response): Promise<void> => {
         try {
-            const id = Number(req.params.id);
-            const project = await this.projectService.update(id, req.body);
+            const projectId = Number(req.params.projectId);
+            const project = await this.projectService.update(projectId, req.body);
 
             res.status(200).json({
                 status: 'success',
@@ -79,10 +79,10 @@ export class ProjectController {
         }
     }
 
-    delete = async(req: Request<{ id: string }>, res: Response): Promise<void> => {
+    delete = async(req: Request<{ projectId: string }>, res: Response): Promise<void> => {
         try {
-            const id = Number(req.params.id);
-            await this.projectService.delete(id);
+            const projectId = Number(req.params.projectId);
+            await this.projectService.delete(projectId);
 
             res.status(204).send();
         } catch {

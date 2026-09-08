@@ -15,7 +15,7 @@ export class UserController {
         catch {
             res.status(500).json({
                 status: 'error',
-                message: 'Hubo un error en la operacion.'
+                message: 'Ocurrio un error en la operacion.'
             });
         }
     };
@@ -38,7 +38,7 @@ export class UserController {
         catch {
             res.status(500).json({
                 status: 'error',
-                message: 'Hubo un error en la operacion.'
+                message: 'Ocurrio un error en la operacion.'
             });
         }
     };

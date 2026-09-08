@@ -21,10 +21,10 @@ export class UserController {
         }
     }
 
-    getById = async(req: Request<{ id: string }>, res: Response): Promise<void> => {
+    getById = async(req: Request<{ userId: string }>, res: Response): Promise<void> => {
         try{
-            const id = Number(req.params.id);
-            const user = await this.userService.getById(id);
+            const userId = Number(req.params.userId);
+            const user = await this.userService.getById(userId);
             
             if(!user) {
                 res.status(404).json({
@@ -62,10 +62,10 @@ export class UserController {
         }
     }
 
-    update = async(req: Request<{ id: string }, {}, UpdateUserInput>, res: Response): Promise<void> => {
+    update = async(req: Request<{ userId: string }, {}, UpdateUserInput>, res: Response): Promise<void> => {
         try{
-            const id = Number(req.params.id);
-            const user = await this.userService.update(id, req.body);
+            const userId = Number(req.params.userId);
+            const user = await this.userService.update(userId, req.body);
 
             res.status(200).json({
                 status: 'success',
@@ -79,10 +79,10 @@ export class UserController {
         }
     }
 
-    delete = async(req: Request<{ id: string }>, res: Response): Promise<void> => {
+    delete = async(req: Request<{ userId: string }>, res: Response): Promise<void> => {
         try{
-            const id = Number(req.params.id);
-            await this.userService.delete(id);
+            const userId = Number(req.params.userId);
+            await this.userService.delete(userId);
 
             res.status(204).send();
         } catch {

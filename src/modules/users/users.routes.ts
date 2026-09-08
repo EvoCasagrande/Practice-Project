@@ -19,4 +19,6 @@ router.
     patch(userController.update).
     delete(userController.delete);
 
+router.use('/:userId/projects', projectRouter)
+
 export default router;

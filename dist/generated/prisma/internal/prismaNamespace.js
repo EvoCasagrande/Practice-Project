@@ -89,7 +89,7 @@ export const ProjectScalarFieldEnum = {
     id: 'id',
     name: 'name',
     description: 'description',
-    authorId: 'authorId'
+    userId: 'userId'
 };
 export const TaskScalarFieldEnum = {
     id: 'id',

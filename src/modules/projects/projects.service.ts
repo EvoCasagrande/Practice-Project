@@ -22,6 +22,7 @@ type ProjectWithUser = ProjectGetPayload<{
 export class ProjectService {
     getAll = async (): Promise<ProjectWithUser[]> => {
         return prisma.project.findMany({
+            
             include: {
                 user: true,
             },
@@ -40,17 +41,13 @@ export class ProjectService {
     create = async (data: CreateProjectInput): Promise<ProjectWithUser> => {
         return prisma.project.create({
             data: {
-            name: data.name,
-            description: data.description,
-            user: {
-                connect: {
-                id: data.userId,
-                },
+                name: data.name,
+                description: data.description,
+                userId: data.userId
             },
-        },
 
-        include: {
-            user: true,
+            include: {
+                user: true,
             },
         });
     };
@@ -61,19 +58,15 @@ export class ProjectService {
             data: {
                 name: data.name,
                 description: data.description,
-                user:
-                    data.userId !== undefined
-                    ? {
-                    connect: {
-                        id: data.userId,
-                        },
-                    }: undefined,
+                userId: data.userId
             },
-            include: { user: true },
+            include: { 
+                user: true 
+            },
         });
     };
 
-    delete = async (id: number) => {
+    delete = async (id: number): Promise<Project> => {
         return prisma.project.delete({
             where: { id },
         });
