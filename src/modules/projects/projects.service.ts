@@ -4,13 +4,11 @@ import { prisma } from "../../lib/prisma.js";
 export type CreateProjectInput = {
     name: string;
     description: string;
-    userId: number;
 };
 
 export type UpdateProjectInput = {
     name?: string;
     description?: string;
-    userId?: number;
 };
 
 type ProjectWithUser = ProjectGetPayload<{
@@ -20,30 +18,33 @@ type ProjectWithUser = ProjectGetPayload<{
 }>;
 
 export class ProjectService {
-    getAll = async (): Promise<ProjectWithUser[]> => {
+    getAll = async (userId: number): Promise<ProjectWithUser[]> => {
         return prisma.project.findMany({
-            
+            where: { userId },
             include: {
                 user: true,
             },
         });
     };
 
-    getById = async (id: number): Promise<ProjectWithUser | null> => {
+    getById = async (userId: number, projectId: number): Promise<ProjectWithUser | null> => {
         return prisma.project.findUnique({
-            where: { id },
+            where: { 
+                id: projectId,
+                userId
+            },
             include: {
                 user: true,
             },
         });
     };
 
-    create = async (data: CreateProjectInput): Promise<ProjectWithUser> => {
+    create = async (userId: number, data: CreateProjectInput): Promise<ProjectWithUser> => {
         return prisma.project.create({
             data: {
                 name: data.name,
                 description: data.description,
-                userId: data.userId
+                userId
             },
 
             include: {
@@ -52,13 +53,15 @@ export class ProjectService {
         });
     };
 
-    update = async (id: number, data: UpdateProjectInput): Promise<ProjectWithUser> => {
+    update = async (userId: number, projectId: number, data: UpdateProjectInput): Promise<ProjectWithUser> => {
         return prisma.project.update({
-            where: { id },
+            where: { 
+                id: projectId, 
+                userId 
+            },
             data: {
                 name: data.name,
                 description: data.description,
-                userId: data.userId
             },
             include: { 
                 user: true 
@@ -66,9 +69,12 @@ export class ProjectService {
         });
     };
 
-    delete = async (id: number): Promise<Project> => {
+    delete = async (userId: number, projectId: number): Promise<Project> => {
         return prisma.project.delete({
-            where: { id },
+            where: { 
+                id: projectId, 
+                userId 
+            },
         });
     };
 }

@@ -1,12 +1,23 @@
 import { TaskService, CreateTaskInput, UpdateTaskInput } from "./tasks.service.js"
 import { Request, Response } from 'express'
 
+type UserProjectParams = {
+    userId: string,
+    projectId: string
+}
+
+type UserProjectTaskParams = {
+    projectId: string,
+    taskId: string
+}
+
 export class TaskController {
     constructor(private readonly taskService: TaskService){}
 
-    getAll = async(req: Request, res: Response): Promise<void> => {
+    getAll = async(req: Request<UserProjectParams>, res: Response): Promise<void> => {
         try{
-            const tasks = await this.taskService.getAll()
+            const projectId = Number(req.params.projectId);
+            const tasks = await this.taskService.getAll(projectId);
 
             res.status(200).json({
                 status: 'success',
@@ -21,10 +32,11 @@ export class TaskController {
         }
     }
 
-    getById = async(req: Request<{ taskId: string }>, res: Response): Promise<void> => {
+    getById = async(req: Request<ProjectTaskParams>, res: Response): Promise<void> => {
         try{
+            const projectId = Number(req.params.projectId);
             const taskId = Number(req.params.taskId);
-            const task = await this.taskService.getById(taskId)
+            const task = await this.taskService.getById(projectId, taskId)
 
             if(!task) {
                 res.status(404).json({
@@ -46,9 +58,10 @@ export class TaskController {
         }
     }
 
-    create = async(req: Request<{}, {}, CreateTaskInput>, res: Response): Promise<void> => {
+    create = async(req: Request<ProjectParams, {}, CreateTaskInput>, res: Response): Promise<void> => {
         try{
-            const task = await this.taskService.create(req.body)
+            const projectId = Number(req.params.projectId);
+            const task = await this.taskService.create(projectId, req.body);
 
             res.status(201).json({
                 status: 'success',
@@ -62,10 +75,11 @@ export class TaskController {
         }
     }
 
-    update = async(req: Request<{ taskId: string }, {}, UpdateTaskInput>, res: Response): Promise<void> => {
+    update = async(req: Request<ProjectTaskParams, {}, UpdateTaskInput>, res: Response): Promise<void> => {
         try{
+            const projectId = Number(req.params.projectId);
             const taskId = Number(req.params.taskId);
-            const task = await this.taskService.update(taskId, req.body);
+            const task = await this.taskService.update(projectId, taskId, req.body);
 
             res.status(200).json({
                 status: 'success',
@@ -79,10 +93,11 @@ export class TaskController {
         }
     }
 
-    delete = async(req: Request<{ taskId: string }>, res: Response): Promise<void> => {
+    delete = async(req: Request<ProjectTaskParams>, res: Response): Promise<void> => {
         try{
+            const projectId = Number(req.params.projectId);
             const taskId = Number(req.params.taskId);
-            const task = await this.taskService.delete(taskId);
+            const task = await this.taskService.delete(projectId, taskId);
 
             res.status(200).json({
                 status: 'success',

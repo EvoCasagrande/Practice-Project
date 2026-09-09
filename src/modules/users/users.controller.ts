@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { type  CreateUserInput, type UpdateUserInput, UserService } from './users.service.js'
+import type { UserParams } from "../projects/projects.controller.js";
 
 export class UserController {
     constructor(private readonly userService: UserService){}
 
-    getAll = async(req: Request, res: Response): Promise<void> => {
+    getAll = async(_req: Request, res: Response): Promise<void> => {
         try{
             const users = await this.userService.getAll();
 
@@ -21,7 +22,7 @@ export class UserController {
         }
     }
 
-    getById = async(req: Request<{ userId: string }>, res: Response): Promise<void> => {
+    getById = async(req: Request<UserParams>, res: Response): Promise<void> => {
         try{
             const userId = Number(req.params.userId);
             const user = await this.userService.getById(userId);
@@ -62,7 +63,7 @@ export class UserController {
         }
     }
 
-    update = async(req: Request<{ userId: string }, {}, UpdateUserInput>, res: Response): Promise<void> => {
+    update = async(req: Request<UserParams, {}, UpdateUserInput>, res: Response): Promise<void> => {
         try{
             const userId = Number(req.params.userId);
             const user = await this.userService.update(userId, req.body);
@@ -79,7 +80,7 @@ export class UserController {
         }
     }
 
-    delete = async(req: Request<{ userId: string }>, res: Response): Promise<void> => {
+    delete = async(req: Request<UserParams>, res: Response): Promise<void> => {
         try{
             const userId = Number(req.params.userId);
             await this.userService.delete(userId);

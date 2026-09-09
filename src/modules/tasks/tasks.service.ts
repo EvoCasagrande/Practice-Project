@@ -4,13 +4,11 @@ import { TaskModel as Task, TaskGetPayload } from '../../../generated/prisma/mod
 export type CreateTaskInput = {
     title: string;
     completed?: boolean;
-    projectId: number;
 };
 
 export type UpdateTaskInput = {
     title?: string;
     completed?: boolean;
-    projectId?: number;
 };
 
 type TaskWithProject = TaskGetPayload<{
@@ -20,29 +18,13 @@ type TaskWithProject = TaskGetPayload<{
 }>;
 
 export class TaskService {
-    getAll = async(): Promise<TaskWithProject[]> => {
+    getAll = async(userId: number, projectId: number): Promise<TaskWithProject[]> => {
         return prisma.task.findMany({
-            include: {
-                project: true
-            }
-        });
-    }
-
-    getById = async(id: number): Promise<TaskWithProject | null> => {
-        return prisma.task.findUnique({
-            where: { id },
-            include: {
-                project: true
-            }
-        });
-    }
-
-    create = async(data: CreateTaskInput): Promise<TaskWithProject> => {
-        return prisma.task.create({
-            data: {
-                title: data.title,
-                completed: data.completed,
-                projectId: data.projectId,
+            where: { 
+                projectId,
+                project: {
+                    userId
+                }
             },
             include: {
                 project: true
@@ -50,13 +32,40 @@ export class TaskService {
         });
     }
 
-    update = async(id: number, data: UpdateTaskInput): Promise<TaskWithProject> => {
-        return prisma.task.update({
-            where: { id },
+    getById = async(userId: number, projectId: number, taskId: number): Promise<TaskWithProject | null> => {
+        return prisma.task.findUnique({
+            where: { 
+                projectId,
+                id: taskId, 
+                project: {
+                    userId
+                }
+            },
+            include: {
+                project: true
+            }
+        });
+    }
+
+    create = async(userId:number, projectId: number, data: CreateTaskInput): Promise<TaskWithProject> => {
+        return prisma.task.create({
             data: {
                 title: data.title,
                 completed: data.completed,
-                projectId: data.projectId,
+                projectId
+            },
+            include: {
+                project: true
+            }
+        });
+    }
+
+    update = async(projectId: number, taskId: number, data: UpdateTaskInput): Promise<TaskWithProject> => {
+        return prisma.task.update({
+            where: { projectId, id: taskId },
+            data: {
+                title: data.title,
+                completed: data.completed,
             },
             include: {
                 project: true
@@ -64,9 +73,12 @@ export class TaskService {
         })
     }
 
-    delete = async(id: number): Promise<Task> => {
+    delete = async(projectId: number, taskId: number): Promise<Task> => {
         return prisma.task.delete({
-            where: { id }
+            where: { 
+                projectId,
+                id: taskId 
+            }
         })
     }
 }
