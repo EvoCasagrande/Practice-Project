@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { type  CreateUserInput, type UpdateUserInput, UserService } from './users.service.js'
-import type { UserParams } from "../projects/projects.controller.js";
+
+import { validarParametro } from "../../utils/validarParametro.js";
+
+export type UserParams = {
+    userId: string
+}
 
 export class UserController {
     constructor(private readonly userService: UserService){}
@@ -24,7 +29,16 @@ export class UserController {
 
     getById = async(req: Request<UserParams>, res: Response): Promise<void> => {
         try{
-            const userId = Number(req.params.userId);
+            const userId = validarParametro(req.params.userId);
+
+            if(userId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId debe ser un entero positivo'
+                });
+                return
+            }
+
             const user = await this.userService.getById(userId);
             
             if(!user) {
@@ -51,6 +65,15 @@ export class UserController {
         try {
             const user = await this.userService.create(req.body)
 
+            if(!user) {
+                res.status(404).json({
+                    status: 'error',
+                    message: 'No existe un usuario con ese ID.',
+                });
+                return;
+            }
+
+
             res.status(201).json({
                 status: 'success',
                 user
@@ -65,7 +88,16 @@ export class UserController {
 
     update = async(req: Request<UserParams, {}, UpdateUserInput>, res: Response): Promise<void> => {
         try{
-            const userId = Number(req.params.userId);
+            const userId = validarParametro(req.params.userId);
+
+            if(userId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId debe ser un entero positivo'
+                });
+                return
+            }
+
             const user = await this.userService.update(userId, req.body);
 
             res.status(200).json({
@@ -82,7 +114,16 @@ export class UserController {
 
     delete = async(req: Request<UserParams>, res: Response): Promise<void> => {
         try{
-            const userId = Number(req.params.userId);
+            const userId = validarParametro(req.params.userId);
+
+            if(userId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId debe ser un entero positivo'
+                });
+                return
+            }
+
             await this.userService.delete(userId);
 
             res.status(204).send();

@@ -1,12 +1,10 @@
 import { TaskService, CreateTaskInput, UpdateTaskInput } from "./tasks.service.js"
 import { Request, Response } from 'express'
-
-type UserProjectParams = {
-    userId: string,
-    projectId: string
-}
+import type { UserProjectParams } from "../projects/projects.controller.js"
+import { validarParametro } from "../../utils/validarParametro.js"
 
 type UserProjectTaskParams = {
+    userId: string,
     projectId: string,
     taskId: string
 }
@@ -16,8 +14,18 @@ export class TaskController {
 
     getAll = async(req: Request<UserProjectParams>, res: Response): Promise<void> => {
         try{
-            const projectId = Number(req.params.projectId);
-            const tasks = await this.taskService.getAll(projectId);
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+
+            if(userId === null || projectId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId y projectId deben ser un entero positivo.'
+                });
+                return
+            }
+
+            const tasks = await this.taskService.getAll(userId, projectId);
 
             res.status(200).json({
                 status: 'success',
@@ -32,16 +40,26 @@ export class TaskController {
         }
     }
 
-    getById = async(req: Request<ProjectTaskParams>, res: Response): Promise<void> => {
+    getById = async(req: Request<UserProjectTaskParams>, res: Response): Promise<void> => {
         try{
-            const projectId = Number(req.params.projectId);
-            const taskId = Number(req.params.taskId);
-            const task = await this.taskService.getById(projectId, taskId)
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+            const taskId = validarParametro (req.params.taskId);
+
+            if(userId === null || projectId === null || taskId ===null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId, projectId y taskId deben ser un entero positivo.'
+                });
+                return
+            }
+            
+            const task = await this.taskService.getById(userId, projectId, taskId);
 
             if(!task) {
                 res.status(404).json({
                     status: 'error',
-                    message: 'No existe projecto con ese id'
+                    message: 'No existe tarea con ese id'
                 });
                 return
             }
@@ -58,10 +76,29 @@ export class TaskController {
         }
     }
 
-    create = async(req: Request<ProjectParams, {}, CreateTaskInput>, res: Response): Promise<void> => {
+    create = async(req: Request<UserProjectParams, {}, CreateTaskInput>, res: Response): Promise<void> => {
         try{
-            const projectId = Number(req.params.projectId);
-            const task = await this.taskService.create(projectId, req.body);
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+
+            if(userId === null || projectId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId y projectId deben ser un entero positivo.'
+                });
+                return
+            }
+
+            const task = await this.taskService.create(userId, projectId, req.body);
+
+            if(!task) {
+                res.status(404).json({
+                    status: 'error',
+                    message: 'No existe un usuario con ese ID.',
+                });
+                return;
+            }
+
 
             res.status(201).json({
                 status: 'success',
@@ -75,11 +112,21 @@ export class TaskController {
         }
     }
 
-    update = async(req: Request<ProjectTaskParams, {}, UpdateTaskInput>, res: Response): Promise<void> => {
+    update = async(req: Request<UserProjectTaskParams, {}, UpdateTaskInput>, res: Response): Promise<void> => {
         try{
-            const projectId = Number(req.params.projectId);
-            const taskId = Number(req.params.taskId);
-            const task = await this.taskService.update(projectId, taskId, req.body);
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+            const taskId = validarParametro (req.params.taskId);
+
+            if(userId === null || projectId === null || taskId ===null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId, projectId y taskId deben ser un entero positivo.'
+                });
+                return
+            }
+
+            const task = await this.taskService.update(userId, projectId, taskId, req.body);
 
             res.status(200).json({
                 status: 'success',
@@ -93,11 +140,21 @@ export class TaskController {
         }
     }
 
-    delete = async(req: Request<ProjectTaskParams>, res: Response): Promise<void> => {
+    delete = async(req: Request<UserProjectTaskParams>, res: Response): Promise<void> => {
         try{
-            const projectId = Number(req.params.projectId);
-            const taskId = Number(req.params.taskId);
-            const task = await this.taskService.delete(projectId, taskId);
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+            const taskId = validarParametro (req.params.taskId);
+
+            if(userId === null || projectId === null || taskId ===null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId, projectId y taskId deben ser un entero positivo.'
+                });
+                return
+            }
+
+            const task = await this.taskService.delete(userId, projectId, taskId);
 
             res.status(200).json({
                 status: 'success',

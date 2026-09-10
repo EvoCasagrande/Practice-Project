@@ -1,11 +1,9 @@
 import type { CreateProjectInput, UpdateProjectInput, ProjectService } from './projects.service.js';
 import { Request, Response } from 'express';
+import { validarParametro } from '../../utils/validarParametro.js';
+import type { UserParams } from "../users/users.controller.js";
 
-export type UserParams = {
-    userId: string
-}
-
-type ProjectUserParams = {
+export type UserProjectParams = {
     userId: string,
     projectId: string
 }
@@ -15,7 +13,16 @@ export class ProjectController {
 
     getAll = async(req: Request<UserParams>, res: Response): Promise<void> => {
         try{
-            const userId = Number(req.params.userId);
+            const userId = validarParametro(req.params.userId);
+            
+            if(userId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId debe ser un entero positivo'
+                });
+                return
+            }
+
             const projects = await this.projectService.getAll(userId);
 
             res.status(200).json({
@@ -31,10 +38,19 @@ export class ProjectController {
         }
     }
 
-    getById = async(req: Request<ProjectUserParams>, res: Response): Promise<void> => {
+    getById = async(req: Request<UserProjectParams>, res: Response): Promise<void> => {
         try {
-            const userId = Number(req.params.userId);
-            const projectId = Number(req.params.projectId);
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+
+            if(userId === null || projectId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId y projectId deben ser un entero positivo.'
+                });
+                return
+            }
+
             const project = await this.projectService.getById(userId, projectId);
 
             if(!project) {
@@ -59,8 +75,25 @@ export class ProjectController {
 
     create = async(req: Request<UserParams, {}, CreateProjectInput>, res: Response): Promise<void> => {
         try {
-            const userId = Number(req.params.userId);
+            const userId = validarParametro(req.params.userId);
+
+            if(userId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId debe ser un entero positivo.'
+                });
+                return
+            }
+
             const project = await this.projectService.create(userId, req.body);
+
+            if(!project) {
+                res.status(404).json({
+                    status: 'error',
+                    message: 'No existe un usuario con ese ID.',
+                });
+                return;
+            }
 
             res.status(201).json({
                 status: 'success',
@@ -74,10 +107,19 @@ export class ProjectController {
         }
     }
 
-    update = async(req: Request<ProjectUserParams, {}, UpdateProjectInput>, res: Response): Promise<void> => {
+    update = async(req: Request<UserProjectParams, {}, UpdateProjectInput>, res: Response): Promise<void> => {
         try {
-            const userId = Number(req.params.userId);
-            const projectId = Number(req.params.projectId);
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+
+            if(userId === null || projectId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId y projectId deben ser un entero positivo.'
+                });
+                return
+            }
+
             const project = await this.projectService.update(userId, projectId, req.body);
 
             res.status(200).json({
@@ -92,10 +134,19 @@ export class ProjectController {
         }
     }
 
-    delete = async(req: Request<ProjectUserParams>, res: Response): Promise<void> => {
+    delete = async(req: Request<UserProjectParams>, res: Response): Promise<void> => {
         try {
-            const userId = Number(req.params.userId);
-            const projectId = Number(req.params.projectId);
+            const userId = validarParametro(req.params.userId);
+            const projectId = validarParametro(req.params.projectId);
+
+            if(userId === null || projectId === null) {
+                res.status(400).json({
+                    status: 'error',
+                    message: 'El userId y projectId deben ser un entero positivo.'
+                });
+                return
+            }
+
             await this.projectService.delete(userId, projectId);
 
             res.status(204).send();
