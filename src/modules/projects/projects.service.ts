@@ -39,7 +39,17 @@ export class ProjectService {
         });
     };
 
-    create = async (userId: number, data: CreateProjectInput): Promise<ProjectWithUser> => {
+    create = async (userId: number, data: CreateProjectInput): Promise<ProjectWithUser | null> => {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+
+        if(!user) {
+            return null
+        }
+
         return prisma.project.create({
             data: {
                 name: data.name,

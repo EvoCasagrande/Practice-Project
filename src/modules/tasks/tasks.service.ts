@@ -47,7 +47,17 @@ export class TaskService {
         });
     }
 
-    create = async(userId:number, projectId: number, data: CreateTaskInput): Promise<TaskWithProject> => {
+    create = async(userId:number, projectId: number, data: CreateTaskInput): Promise<TaskWithProject | null> => {
+        const project = await prisma.project.findUnique({
+            where: {
+                userId, id: projectId
+            }
+        });
+
+        if(!project) {
+            return null 
+        }
+
         return prisma.task.create({
             data: {
                 title: data.title,
@@ -60,9 +70,15 @@ export class TaskService {
         });
     }
 
-    update = async(projectId: number, taskId: number, data: UpdateTaskInput): Promise<TaskWithProject> => {
+    update = async(userId: number, projectId: number, taskId: number, data: UpdateTaskInput): Promise<TaskWithProject> => {
         return prisma.task.update({
-            where: { projectId, id: taskId },
+            where: { 
+                projectId,
+                id: taskId,
+                project: {
+                    userId
+                }
+            },
             data: {
                 title: data.title,
                 completed: data.completed,
@@ -73,11 +89,14 @@ export class TaskService {
         })
     }
 
-    delete = async(projectId: number, taskId: number): Promise<Task> => {
+    delete = async(userId: number, projectId: number, taskId: number): Promise<Task> => {
         return prisma.task.delete({
             where: { 
                 projectId,
-                id: taskId 
+                id: taskId,
+                project: {
+                    userId
+                }
             }
         })
     }
