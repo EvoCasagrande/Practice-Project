@@ -1,7 +1,8 @@
-import { TaskService, CreateTaskInput, UpdateTaskInput } from "./tasks.service.js"
-import { Request, Response } from 'express'
+import { TaskService} from "./tasks.service.js"
+import type { Request, Response } from 'express'
 import type { UserProjectParams } from "../projects/projects.controller.js"
 import { validarParametro } from "../../utils/validarParametro.js"
+import type { CreateTaskInput, UpdateTaskInput } from "./tasks.schema.js"
 
 type UserProjectTaskParams = {
     userId: string,

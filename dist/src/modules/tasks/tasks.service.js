@@ -1,48 +1,79 @@
 import { prisma } from '../../lib/prisma.js';
 export class TaskService {
-    getAll = async () => {
+    getAll = async (userId, projectId) => {
         return prisma.task.findMany({
+            where: {
+                projectId,
+                project: {
+                    userId
+                }
+            },
             include: {
                 project: true
             }
         });
     };
-    getById = async (id) => {
+    getById = async (userId, projectId, taskId) => {
         return prisma.task.findUnique({
-            where: { id },
+            where: {
+                projectId,
+                id: taskId,
+                project: {
+                    userId
+                }
+            },
             include: {
                 project: true
             }
         });
     };
-    create = async (data) => {
+    create = async (userId, projectId, data) => {
+        const project = await prisma.project.findUnique({
+            where: {
+                userId, id: projectId
+            }
+        });
+        if (!project) {
+            return null;
+        }
         return prisma.task.create({
             data: {
                 title: data.title,
                 completed: data.completed,
-                projectId: data.projectId,
+                projectId
             },
             include: {
                 project: true
             }
         });
     };
-    update = async (id, data) => {
+    update = async (userId, projectId, taskId, data) => {
         return prisma.task.update({
-            where: { id },
+            where: {
+                projectId,
+                id: taskId,
+                project: {
+                    userId
+                }
+            },
             data: {
                 title: data.title,
                 completed: data.completed,
-                projectId: data.projectId,
             },
             include: {
                 project: true
             }
         });
     };
-    delete = async (id) => {
+    delete = async (userId, projectId, taskId) => {
         return prisma.task.delete({
-            where: { id }
+            where: {
+                projectId,
+                id: taskId,
+                project: {
+                    userId
+                }
+            }
         });
     };
 }

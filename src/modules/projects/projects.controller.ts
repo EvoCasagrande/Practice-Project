@@ -1,7 +1,8 @@
-import type { CreateProjectInput, UpdateProjectInput, ProjectService } from './projects.service.js';
-import { Request, Response } from 'express';
+import type { ProjectService } from './projects.service.js';
+import type { Request, Response } from 'express';
 import { validarParametro } from '../../utils/validarParametro.js';
 import type { UserParams } from "../users/users.controller.js";
+import type { UpdateProjectInput, CreateProjectInput } from './projects.schema.js';
 
 export type UserProjectParams = {
     userId: string,
@@ -99,7 +100,7 @@ export class ProjectController {
                 status: 'success',
                 project
             });
-        } catch {
+        } catch (error) {
             res.status(500).json({
                 status: 'error',
                 message: 'Ocurrio un error en la operacion.'

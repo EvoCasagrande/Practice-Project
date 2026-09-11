@@ -1,15 +1,6 @@
 import { prisma } from '../../lib/prisma.js'
-import { TaskModel as Task, TaskGetPayload } from '../../../generated/prisma/models.js'
-
-export type CreateTaskInput = {
-    title: string;
-    completed?: boolean;
-};
-
-export type UpdateTaskInput = {
-    title?: string;
-    completed?: boolean;
-};
+import type { TaskModel as Task, TaskGetPayload } from '../../../generated/prisma/models.js'
+import type { CreateTaskInput, UpdateTaskInput } from './tasks.schema.js';
 
 type TaskWithProject = TaskGetPayload<{
     include: {

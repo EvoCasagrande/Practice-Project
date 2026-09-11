@@ -1,15 +1,6 @@
 import type { UserModel as User} from "../../../generated/prisma/models.js";
 import { prisma } from '../../lib/prisma.js'
-
-export type CreateUserInput = {
-    name: string,
-    email: string
-};
-
-export type UpdateUserInput = {
-    name?: string,
-    email?: string
-}
+import type { CreateUserInput, UpdateUserInput } from "./users.schema.js";
 
 export class UserService {
     getAll = async():Promise<User[]> => {

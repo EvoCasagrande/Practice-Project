@@ -1,15 +1,6 @@
 import type { ProjectModel as Project, ProjectGetPayload } from "../../../generated/prisma/models.js";
 import { prisma } from "../../lib/prisma.js";
-
-export type CreateProjectInput = {
-    name: string;
-    description: string;
-};
-
-export type UpdateProjectInput = {
-    name?: string;
-    description?: string;
-};
+import type { CreateProjectInput, UpdateProjectInput } from "./projects.schema.js";
 
 type ProjectWithUser = ProjectGetPayload<{
     include: {
