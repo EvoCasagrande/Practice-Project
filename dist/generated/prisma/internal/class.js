@@ -15,7 +15,7 @@ const config = {
     "clientVersion": "7.10.0",
     "engineVersion": "0edf323efd1d98336f3f0a68684b56f689b900d3",
     "activeProvider": "postgresql",
-    "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id    Int    @id @default(autoincrement())\n  name  String\n  email String @unique\n\n  projects Project[]\n}\n\nmodel Project {\n  id          Int    @id @default(autoincrement())\n  name        String\n  description String\n\n  userId Int\n  user   User @relation(fields: [userId], references: [id])\n\n  tasks Task[]\n}\n\nmodel Task {\n  id        Int     @id @default(autoincrement())\n  title     String\n  completed Boolean @default(false)\n\n  projectId Int\n  project   Project @relation(fields: [projectId], references: [id])\n}\n",
+    "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id    Int    @id @default(autoincrement())\n  name  String\n  email String @unique\n\n  projects Project[]\n}\n\nmodel Project {\n  id          Int    @id @default(autoincrement())\n  name        String\n  description String\n\n  userId Int\n  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  tasks Task[]\n}\n\nmodel Task {\n  id        Int     @id @default(autoincrement())\n  title     String\n  completed Boolean @default(false)\n\n  projectId Int\n  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)\n}\n",
     "runtimeDataModel": {
         "models": {},
         "enums": {},
