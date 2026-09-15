@@ -1,138 +1,71 @@
 import { validarParametro } from '../../utils/validarParametro.js';
+import { AppError } from '../../utils/AppError.js';
 export class ProjectController {
     projectService;
     constructor(projectService) {
         this.projectService = projectService;
     }
     getAll = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            if (userId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId debe ser un entero positivo'
-                });
-                return;
-            }
-            const projects = await this.projectService.getAll(userId);
-            res.status(200).json({
-                status: 'success',
-                results: projects.length,
-                projects
-            });
+        const userId = validarParametro(req.params.userId);
+        if (userId === null) {
+            throw new AppError('El userId debe ser un entero positivo', 400);
         }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrió un error en la operación.'
-            });
-        }
+        const projects = await this.projectService.getAll(userId);
+        res.status(200).json({
+            status: 'success',
+            results: projects.length,
+            projects
+        });
     };
     getById = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            const projectId = validarParametro(req.params.projectId);
-            if (userId === null || projectId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId y projectId deben ser un entero positivo.'
-                });
-                return;
-            }
-            const project = await this.projectService.getById(userId, projectId);
-            if (!project) {
-                res.status(404).json({
-                    status: 'error',
-                    message: 'No existe projecto con ese id'
-                });
-                return;
-            }
-            res.status(200).json({
-                status: 'success',
-                project
-            });
+        const userId = validarParametro(req.params.userId);
+        const projectId = validarParametro(req.params.projectId);
+        if (userId === null || projectId === null) {
+            throw new AppError('El userId y projectId deben ser un entero positivo.', 400);
         }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrió un error en la operación.'
-            });
+        const project = await this.projectService.getById(userId, projectId);
+        if (!project) {
+            throw new AppError('No existe projecto con ese id', 404);
         }
+        res.status(200).json({
+            status: 'success',
+            project
+        });
     };
     create = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            if (userId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId debe ser un entero positivo.'
-                });
-                return;
-            }
-            const project = await this.projectService.create(userId, req.body);
-            if (!project) {
-                res.status(404).json({
-                    status: 'error',
-                    message: 'No existe un usuario con ese ID.',
-                });
-                return;
-            }
-            res.status(201).json({
-                status: 'success',
-                project
-            });
+        const userId = validarParametro(req.params.userId);
+        if (userId === null) {
+            throw new AppError('El userId debe ser un entero positivo.', 400);
         }
-        catch (error) {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
+        const project = await this.projectService.create(userId, req.body);
+        if (!project) {
+            throw new AppError('No existe un usuario con ese ID.', 404);
         }
+        res.status(201).json({
+            status: 'success',
+            project
+        });
     };
     update = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            const projectId = validarParametro(req.params.projectId);
-            if (userId === null || projectId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId y projectId deben ser un entero positivo.'
-                });
-                return;
-            }
-            const project = await this.projectService.update(userId, projectId, req.body);
-            res.status(200).json({
-                status: 'success',
-                project
-            });
+        const userId = validarParametro(req.params.userId);
+        const projectId = validarParametro(req.params.projectId);
+        if (userId === null || projectId === null) {
+            throw new AppError('El userId y projectId deben ser un entero positivo.', 400);
         }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
-        }
+        const project = await this.projectService.update(userId, projectId, req.body);
+        res.status(200).json({
+            status: 'success',
+            project
+        });
     };
     delete = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            const projectId = validarParametro(req.params.projectId);
-            if (userId === null || projectId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId y projectId deben ser un entero positivo.'
-                });
-                return;
-            }
-            await this.projectService.delete(userId, projectId);
-            res.status(204).send();
+        const userId = validarParametro(req.params.userId);
+        const projectId = validarParametro(req.params.projectId);
+        if (userId === null || projectId === null) {
+            throw new AppError('El userId y projectId deben ser un entero positivo.', 400);
         }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
-        }
+        await this.projectService.delete(userId, projectId);
+        res.status(204).send();
     };
 }
 //# sourceMappingURL=projects.controller.js.map

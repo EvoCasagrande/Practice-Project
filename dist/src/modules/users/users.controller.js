@@ -1,119 +1,57 @@
 import { validarParametro } from "../../utils/validarParametro.js";
+import { AppError } from "../../utils/AppError.js";
 export class UserController {
     userService;
     constructor(userService) {
         this.userService = userService;
     }
     getAll = async (_req, res) => {
-        try {
-            const users = await this.userService.getAll();
-            res.status(200).json({
-                status: 'success',
-                results: users.length,
-                users
-            });
-        }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
-        }
+        const users = await this.userService.getAll();
+        res.status(200).json({
+            status: 'success',
+            results: users.length,
+            users
+        });
     };
     getById = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            if (userId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId debe ser un entero positivo'
-                });
-                return;
-            }
-            const user = await this.userService.getById(userId);
-            if (!user) {
-                res.status(404).json({
-                    status: 'error',
-                    message: 'No existe usuario con ese id'
-                });
-                return;
-            }
-            res.status(200).json({
-                status: 'success',
-                user
-            });
+        const userId = validarParametro(req.params.userId);
+        if (userId === null) {
+            throw new AppError('El userId debe ser un entero positivo', 400);
         }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
+        const user = await this.userService.getById(userId);
+        if (!user) {
+            throw new AppError('No existe usuario con ese id', 404);
         }
+        res.status(200).json({
+            status: 'success',
+            user
+        });
     };
     create = async (req, res) => {
-        try {
-            const user = await this.userService.create(req.body);
-            if (!user) {
-                res.status(404).json({
-                    status: 'error',
-                    message: 'No existe un usuario con ese ID.',
-                });
-                return;
-            }
-            res.status(201).json({
-                status: 'success',
-                user
-            });
-        }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
-        }
+        const user = await this.userService.create(req.body);
+        res.status(201).json({
+            status: 'success',
+            user
+        });
     };
     update = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            if (userId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId debe ser un entero positivo'
-                });
-                return;
-            }
-            const user = await this.userService.update(userId, req.body);
-            res.status(200).json({
-                status: 'success',
-                user
-            });
+        const userId = validarParametro(req.params.userId);
+        if (userId === null) {
+            throw new AppError('El userId debe ser un entero positivo', 400);
         }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
-        }
+        const user = await this.userService.update(userId, req.body);
+        res.status(200).json({
+            status: 'success',
+            user
+        });
     };
     delete = async (req, res) => {
-        try {
-            const userId = validarParametro(req.params.userId);
-            if (userId === null) {
-                res.status(400).json({
-                    status: 'error',
-                    message: 'El userId debe ser un entero positivo'
-                });
-                return;
-            }
-            await this.userService.delete(userId);
-            res.status(204).send();
+        const userId = validarParametro(req.params.userId);
+        if (userId === null) {
+            throw new AppError('El userId debe ser un entero positivo', 400);
         }
-        catch {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ocurrio un error en la operacion.'
-            });
-        }
+        await this.userService.delete(userId);
+        res.status(204).send();
     };
 }
 //# sourceMappingURL=users.controller.js.map

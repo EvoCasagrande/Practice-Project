@@ -1,6 +1,7 @@
-import express, { Application } from 'express';
+import express, { type Application, type NextFunction } from 'express';
 import userRouter from './modules/users/users.routes.js'
 import { errorHandler } from './middlewares/errorHandler.js';
+import { AppError } from './utils/AppError.js';
 
 const app: Application = express();
 
@@ -10,7 +11,15 @@ app.use(express.json());
 
 //Routes
 app.use('/api/v1/users', userRouter)
+
+app.use((_req , _res, next: NextFunction): void => {
+    const error = new AppError('Lo sentimos, esta página no existe.', 404);
+    next(error);
+});
+
+
 app.use(errorHandler);
+
 
 
 export default app;
