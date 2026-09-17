@@ -12,8 +12,7 @@ const router = Router();
 
 router.
     route('/').
-    get(userController.getAll).
-    post(validarBody(createUserSchema), userController.create);
+    get(userController.getAll)
 
 router.
     route('/:userId').

@@ -27,13 +27,6 @@ export class UserController {
             user
         });
     };
-    create = async (req, res) => {
-        const user = await this.userService.create(req.body);
-        res.status(201).json({
-            status: 'success',
-            user
-        });
-    };
     update = async (req, res) => {
         const userId = validarParametro(req.params.userId);
         if (userId === null) {

@@ -40,15 +40,6 @@ export class UserController {
             })
         }
 
-    create = async(req: Request<{},{}, CreateUserInput>, res: Response): Promise<void> => {
-            const user = await this.userService.create(req.body)
-
-            res.status(201).json({
-                status: 'success',
-                user
-            })
-    }
-
     update = async(req: Request<UserParams, {}, UpdateUserInput>, res: Response): Promise<void> => {
             const userId = validarParametro(req.params.userId);
 

@@ -5,7 +5,12 @@ export const createUserSchema = z.object({
         .trim()
         .min(1, 'El nombre es obligatorio'),
     email: z
-        .email(),
+        .string()
+        .trim()
+        .toLowerCase()
+        .pipe(z.email({
+        message: 'Correo electrónico no válido',
+    })),
 });
 export const updateUserSchema = createUserSchema
     .partial()

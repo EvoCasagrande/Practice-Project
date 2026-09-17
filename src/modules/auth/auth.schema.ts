@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Buffer } from 'node:buffer';
 
 export const registerSchema = z.object({
     name: z
@@ -23,6 +24,10 @@ export const registerSchema = z.object({
         .regex( /^(?=.*[A-Z]).{8,}$/ , { 
             message: 'Debe contener al menos una letra mayúscula y tener una longitud mínima de 8 caracteres.', 
         })
+        .refine((password) => 
+            Buffer.byteLength(password, 'utf-8') <= 72,
+            { message: 'La contraseña no debe superar los 72 bytes en UTF-8' }
+        )
 });
 
 export const loginSchema = z.object({
@@ -39,6 +44,10 @@ export const loginSchema = z.object({
     password: z
         .string()
         .min(1, 'Ingresa una contraseña valida')
+        .refine((password) => 
+            Buffer.byteLength(password, 'utf-8') <= 72,
+            { message: 'La contraseña no debe superar los 72 bytes en UTF-8' }
+        )
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>

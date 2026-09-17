@@ -8,9 +8,6 @@ export class UserService {
             where: { id }
         });
     };
-    create = async (data) => {
-        return prisma.user.create({ data });
-    };
     update = async (id, data) => {
         return prisma.user.update({
             where: { id },

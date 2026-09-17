@@ -13,10 +13,6 @@ export class UserService {
         });
     }
 
-    create = async(data: CreateUserInput): Promise<User> => {
-        return prisma.user.create({ data })
-    }
-
     update = async(id: number, data: UpdateUserInput):Promise<User> => {
         return prisma.user.update({
             where: { id },
