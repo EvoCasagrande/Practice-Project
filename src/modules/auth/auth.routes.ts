@@ -16,10 +16,10 @@ router.post(
     authController.register
 );
 
-//router.post(
-//    '/login',
-//    validarBody(loginSchema),
-//    authController.login
-//)
+router.post(
+    '/login',
+    validarBody(loginSchema),
+    authController.login
+)
 
 export default router;

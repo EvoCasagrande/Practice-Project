@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from './users.service.js'
 import { validarParametro } from "../../utils/validarParametro.js";
-import type { CreateUserInput, UpdateUserInput } from "./users.schema.js";
+import type { UpdateUserInput } from "./users.schema.js";
 import { AppError } from "../../utils/AppError.js";
 
 export type UserParams = {

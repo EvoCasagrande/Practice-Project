@@ -2,8 +2,9 @@ import { Router } from 'express';
 import { UserService } from './users.service.js';
 import { UserController } from './users.controller.js';
 import projectRouter from '../projects/projects.routes.js'
-import { createUserSchema, updateUserSchema } from './users.schema.js';
+import { updateUserSchema } from './users.schema.js';
 import { validarBody } from '../../middlewares/validarBody.js';
+import { autorizarUsuario } from '../../middlewares/autorizarUsuario.js';
 
 const userService = new UserService();
 const userController = new UserController(userService);
@@ -16,10 +17,10 @@ router.
 
 router.
     route('/:userId').
-    get(userController.getById).
-    patch(validarBody(updateUserSchema), userController.update).
-    delete(userController.delete);
+    get(autorizarUsuario, userController.getById).
+    patch(autorizarUsuario, validarBody(updateUserSchema), userController.update).
+    delete( autorizarUsuario, userController.delete);
 
-router.use('/:userId/projects', projectRouter)
+router.use('/:userId/projects', autorizarUsuario, projectRouter)
 
 export default router;

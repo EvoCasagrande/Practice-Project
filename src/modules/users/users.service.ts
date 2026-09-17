@@ -1,22 +1,44 @@
 import type { UserModel as User} from "../../../generated/prisma/models.js";
 import { prisma } from '../../lib/prisma.js'
-import type { CreateUserInput, UpdateUserInput } from "./users.schema.js";
+import type { UpdateUserInput } from "./users.schema.js";
+
+type PublicUser = {
+    id: number,
+    name: string,
+    email: string
+}
 
 export class UserService {
-    getAll = async():Promise<User[]> => {
-        return prisma.user.findMany();
-    }
-
-    getById = async(id: number):Promise<User | null> => {
-        return prisma.user.findUnique({
-            where: { id }
+    getAll = async():Promise<PublicUser[]> => {
+        return prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                email: true
+            }
         });
     }
 
-    update = async(id: number, data: UpdateUserInput):Promise<User> => {
+    getById = async(id: number):Promise<PublicUser | null> => {
+        return prisma.user.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                name: true,
+                email: true
+            }
+        });
+    }
+
+    update = async(id: number, data: UpdateUserInput):Promise<PublicUser> => {
         return prisma.user.update({
             where: { id },
-            data
+            data,
+            select: {
+                id: true,
+                name: true,
+                email: true
+            }
         });
     }
 
