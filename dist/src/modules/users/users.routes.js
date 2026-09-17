@@ -4,6 +4,7 @@ import { UserController } from './users.controller.js';
 import projectRouter from '../projects/projects.routes.js';
 import { updateUserSchema } from './users.schema.js';
 import { validarBody } from '../../middlewares/validarBody.js';
+import { autorizarUsuario } from '../../middlewares/autorizarUsuario.js';
 const userService = new UserService();
 const userController = new UserController(userService);
 const router = Router();
@@ -12,9 +13,9 @@ router.
     get(userController.getAll);
 router.
     route('/:userId').
-    get(userController.getById).
-    patch(validarBody(updateUserSchema), userController.update).
-    delete(userController.delete);
-router.use('/:userId/projects', projectRouter);
+    get(autorizarUsuario, userController.getById).
+    patch(autorizarUsuario, validarBody(updateUserSchema), userController.update).
+    delete(autorizarUsuario, userController.delete);
+router.use('/:userId/projects', autorizarUsuario, projectRouter);
 export default router;
 //# sourceMappingURL=users.routes.js.map

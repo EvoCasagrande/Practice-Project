@@ -2,9 +2,16 @@ import type { ProjectModel as Project, ProjectGetPayload } from "../../../genera
 import { prisma } from "../../lib/prisma.js";
 import type { CreateProjectInput, UpdateProjectInput } from "./projects.schema.js";
 
+
 type ProjectWithUser = ProjectGetPayload<{
     include: {
-        user: true;
+        user: {
+            select: {
+                id: true,
+                email: true,
+                name: true
+            }
+        };
     };
 }>;
 
@@ -13,7 +20,13 @@ export class ProjectService {
         return prisma.project.findMany({
             where: { userId },
             include: {
-                user: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                },
             },
         });
     };

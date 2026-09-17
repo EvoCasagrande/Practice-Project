@@ -2,14 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from "../../lib/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 import jwt from "jsonwebtoken";
-const getJwtSecret = () => {
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-        throw new Error('JWT_SECRET no esta definida');
-    }
-    return jwtSecret;
-};
-const jwtSecret = getJwtSecret();
+import { jwtSecret } from "../../config/env.js";
 export class AuthService {
     register = async (data) => {
         const passwordHash = await bcrypt.hash(data.password, 12);
