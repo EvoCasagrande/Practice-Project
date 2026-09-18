@@ -41,7 +41,7 @@ export class AuthService {
             id: user.id
         };
         const token = jwt.sign(userId, jwtSecret, {
-            expiresIn: '1d'
+            expiresIn: '30d'
         });
         const authUser = {
             user: publicUser,

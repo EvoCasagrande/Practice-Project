@@ -10,4 +10,5 @@ const getJwtSecret = (): string => {
     return jwtSecret
 }
 
+
 export const jwtSecret = getJwtSecret();

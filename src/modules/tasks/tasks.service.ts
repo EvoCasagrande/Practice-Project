@@ -9,7 +9,18 @@ type TaskWithProject = TaskGetPayload<{
 }>;
 
 export class TaskService {
-    getAll = async(userId: number, projectId: number): Promise<TaskWithProject[]> => {
+    getAll = async(userId: number, projectId: number): Promise<TaskWithProject[] | null> => {
+        const project = await prisma.project.findUnique({
+            where: {
+                id: projectId,
+                userId
+            }
+        })
+
+        if(!project) {
+            return null
+        }
+
         return prisma.task.findMany({
             where: { 
                 projectId,

@@ -12,8 +12,7 @@ const userController = new UserController(userService);
 const router = Router();
 
 router.
-    route('/').
-    get(userController.getAll)
+    route('/')
 
 router.
     route('/:userId').

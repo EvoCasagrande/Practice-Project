@@ -38,7 +38,13 @@ export class ProjectService {
                 userId
             },
             include: {
-                user: true,
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    },
+                },
             },
         });
     };
@@ -62,7 +68,13 @@ export class ProjectService {
             },
 
             include: {
-                user: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                },
             },
         });
     };
@@ -78,7 +90,13 @@ export class ProjectService {
                 description: data.description,
             },
             include: { 
-                user: true 
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                } 
             },
         });
     };

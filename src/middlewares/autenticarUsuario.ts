@@ -12,7 +12,7 @@ export const autenticarUsuario = (req: Request, res: Response, next: NextFunctio
     }
 
     const token = encabezado?.slice(7).trim();
-
+    
     if(!token){
         throw new AppError('Acceso no autorizado', 401);
     }
@@ -22,6 +22,7 @@ export const autenticarUsuario = (req: Request, res: Response, next: NextFunctio
     try {
         payload = jwt.verify(token, jwtSecret)
     } catch {
+
         throw new AppError('Acceso no autorizado', 401)
     }
 

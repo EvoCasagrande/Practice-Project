@@ -30,6 +30,30 @@ export const errorHandler = (err: unknown, _req: Request, res: Response, next: N
             });
             return
         }
+        if(err.code === 'P2003') {  
+            res.status(409).json({
+                status: 'error',
+                message: "No se puede completar la operación porque existe una relación inválida"
+            });
+            return
+        }
+        if(err.code === 'P2024') {  
+            console.error(err);
+            res.status(503).json({
+                status: 'error',
+                message: "El servicio de base de datos no está disponible temporalmente"
+            });
+            return
+        }
+    }
+
+    if(err instanceof Prisma.PrismaClientInitializationError) {
+        console.error(err)
+        res.status(503).json({
+            status: 'error',
+            message: 'El servicio de base de datos no está disponible temporalmente'
+        })
+        return
     }
 
     console.error(err);

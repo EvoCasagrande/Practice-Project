@@ -4,7 +4,13 @@ export class ProjectService {
         return prisma.project.findMany({
             where: { userId },
             include: {
-                user: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                },
             },
         });
     };
@@ -15,7 +21,13 @@ export class ProjectService {
                 userId
             },
             include: {
-                user: true,
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    },
+                },
             },
         });
     };
@@ -35,7 +47,13 @@ export class ProjectService {
                 userId
             },
             include: {
-                user: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                },
             },
         });
     };
@@ -50,7 +68,13 @@ export class ProjectService {
                 description: data.description,
             },
             include: {
-                user: true
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true
+                    }
+                }
             },
         });
     };

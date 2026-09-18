@@ -24,6 +24,10 @@ export class TaskController {
 
         const tasks = await this.taskService.getAll(userId, projectId);
 
+        if(tasks === null){
+            throw new AppError('No existe un proyecto con ese ID', 404)
+        }
+
         res.status(200).json({
             status: 'success',
             results: tasks.length,
