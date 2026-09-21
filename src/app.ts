@@ -4,12 +4,12 @@ import authRouter from './modules/auth/auth.routes.js'
 import { errorHandler } from './middlewares/errorHandler.js';
 import { AppError } from './utils/AppError.js';
 import { autenticarUsuario } from './middlewares/autenticarUsuario.js';
-
+import helmet from 'helmet';
 
 const app: Application = express();
 
 //Middlewares
-
+app.use(helmet())
 app.use(express.json());
 
 //Routes
