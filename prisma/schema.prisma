@@ -1,3 +1,8 @@
+enum Role {
+  ADMIN
+  USER
+}
+
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -12,6 +17,7 @@ model User {
   name  String
   email String @unique
   passwordHash String
+  role Role @default(USER)
 
   projects Project[]
 }

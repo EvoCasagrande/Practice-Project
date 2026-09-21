@@ -1,6 +1,7 @@
 import { prisma } from '../../lib/prisma.js'
 import type { TaskModel as Task, TaskGetPayload } from '../../../generated/prisma/models.js'
 import type { CreateTaskInput, UpdateTaskInput } from './tasks.schema.js';
+import type { TaskQueryInput } from './tasks.schema.js';
 
 type TaskWithProject = TaskGetPayload<{
     include: {
@@ -8,12 +9,17 @@ type TaskWithProject = TaskGetPayload<{
     }
 }>;
 
+type TaskListResult = {
+    tasks: TaskWithProject[],
+    total: number
+}
+
 export class TaskService {
-    getAll = async(userId: number, projectId: number): Promise<TaskWithProject[] | null> => {
+    getAll = async(userId: number, projectId: number, filters: TaskQueryInput): Promise<TaskListResult | null> => {
         const project = await prisma.project.findUnique({
             where: {
                 id: projectId,
-                userId
+                userId,
             }
         })
 
@@ -21,17 +27,48 @@ export class TaskService {
             return null
         }
 
-        return prisma.task.findMany({
+        const total = await prisma.task.count({
             where: { 
                 projectId,
                 project: {
                     userId
+                },
+                completed: filters.completed,
+                title: {
+                    contains: filters.search,
+                    mode: 'insensitive'
                 }
+            },
+        })
+
+        const tasks = await prisma.task.findMany({
+            where: { 
+                projectId,
+                project: {
+                    userId
+                },
+                completed: filters.completed,
+                title: {
+                    contains: filters.search,
+                    mode: 'insensitive'
+                }
+            },
+            skip: (filters.page - 1) * filters.limit,
+            take: filters.limit,
+            orderBy: {
+                id: 'asc'
             },
             include: {
                 project: true
             }
         });
+
+        const returnObj = {
+            tasks,
+            total
+        }
+
+        return returnObj
     }
 
     getById = async(userId: number, projectId: number, taskId: number): Promise<TaskWithProject | null> => {

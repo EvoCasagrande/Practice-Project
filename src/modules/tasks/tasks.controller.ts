@@ -4,6 +4,8 @@ import type { UserProjectParams } from "../projects/projects.controller.js"
 import { validarParametro } from "../../utils/validarParametro.js"
 import type { CreateTaskInput, UpdateTaskInput } from "./tasks.schema.js"
 import { AppError } from "../../utils/AppError.js"
+import { taskQuerySchema } from "./tasks.schema.js"
+import { safeParse } from "zod"
 
 type UserProjectTaskParams = {
     userId: string,
@@ -19,19 +21,29 @@ export class TaskController {
         const projectId = validarParametro(req.params.projectId);
 
         if(userId === null || projectId === null) {
-            throw new AppError('El userId y projectId deben ser un entero positivo.', 400)
+            throw new AppError('El userId y projectId deben ser un entero positivo y menor a 2147483648.', 400)
         }
 
-        const tasks = await this.taskService.getAll(userId, projectId);
+        const query = safeParse(taskQuerySchema, req.query);
 
-        if(tasks === null){
+        if(!query.success) {
+            throw new AppError(query.error.issues[0].message, 400)
+        }
+
+        const result = await this.taskService.getAll(userId, projectId, query.data);
+
+        if(result === null){
             throw new AppError('No existe un proyecto con ese ID', 404)
         }
 
         res.status(200).json({
             status: 'success',
-            results: tasks.length,
-            tasks
+            results: result.tasks.length,
+            page: query.data.page,
+            limit: query.data.limit,
+            total: result.total,
+            totalPages: Math.ceil(result.total/query.data.limit) ,
+            tasks: result.tasks
         })
     }
 
@@ -41,7 +53,7 @@ export class TaskController {
         const taskId = validarParametro (req.params.taskId);
 
         if(userId === null || projectId === null || taskId ===null) {
-            throw new AppError('El userId, projectId y taskId deben ser un entero positivo.', 400)
+            throw new AppError('El userId, projectId y taskId deben ser un entero positivo y menor a 2147483648.', 400)
         }
             
         const task = await this.taskService.getById(userId, projectId, taskId);
@@ -61,7 +73,7 @@ export class TaskController {
         const projectId = validarParametro(req.params.projectId);
 
         if(userId === null || projectId === null) {
-            throw new AppError('El userId y projectId deben ser un entero positivo.', 400)
+            throw new AppError('El userId y projectId deben ser un entero positivo y menor a 2147483648.', 400)
         }
 
         const task = await this.taskService.create(userId, projectId, req.body);
@@ -83,7 +95,7 @@ export class TaskController {
         const taskId = validarParametro (req.params.taskId);
 
         if(userId === null || projectId === null || taskId ===null) {
-            throw new AppError('El userId, projectId y taskId deben ser un entero positivo.', 400)
+            throw new AppError('El userId, projectId y taskId deben ser un entero positivo y menor a 2147483648.', 400)
         }
 
         const task = await this.taskService.update(userId, projectId, taskId, req.body);
@@ -100,7 +112,7 @@ export class TaskController {
         const taskId = validarParametro (req.params.taskId);
 
         if(userId === null || projectId === null || taskId ===null) {
-            throw new AppError('El userId, projectId y taskId deben ser un entero positivo.', 400)
+            throw new AppError('El userId, projectId y taskId deben ser un entero positivo y menor a 2147483648.', 400)
         }
 
         const task = await this.taskService.delete(userId, projectId, taskId);

@@ -11,7 +11,7 @@ export const autorizarUsuario = (req: Request<UserId>, res: Response, next: Next
     const idValido = validarParametro(id);
     
     if(idValido === null) {
-        throw new AppError('El userId debe ser un entero positivo', 400);
+        throw new AppError('El userId debe ser un entero positivo y menor a 2147483648.', 400);
     }
 
     if(idValido !== res.locals.userId){

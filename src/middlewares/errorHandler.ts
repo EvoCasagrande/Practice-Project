@@ -56,6 +56,23 @@ export const errorHandler = (err: unknown, _req: Request, res: Response, next: N
         return
     }
 
+    if(err instanceof Error && 'type' in err) {
+        if(err.type === 'entity.parse.failed') {
+            res.status(400).json({
+                status: 'error',
+                message: 'El cuerpo de la petición no contiene un JSON válido'
+            });
+            return
+        }
+        if(err.type === 'entity.too.large') {
+            res.status(413).json({
+                status: 'error',
+                message: 'El contenido enviado supera el limite permitido'
+            })
+            return
+        }
+    }
+
     console.error(err);
 
     res.status(500).json({

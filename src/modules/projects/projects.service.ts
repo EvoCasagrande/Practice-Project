@@ -1,7 +1,6 @@
 import type { ProjectModel as Project, ProjectGetPayload } from "../../../generated/prisma/models.js";
 import { prisma } from "../../lib/prisma.js";
-import type { CreateProjectInput, UpdateProjectInput } from "./projects.schema.js";
-
+import type { CreateProjectInput, ProjectQueryInput, UpdateProjectInput } from "./projects.schema.js";
 
 type ProjectWithUser = ProjectGetPayload<{
     include: {
@@ -15,10 +14,36 @@ type ProjectWithUser = ProjectGetPayload<{
     };
 }>;
 
+type ProjectListResult = {
+    projects: ProjectWithUser[],
+    total: number
+}
+
 export class ProjectService {
-    getAll = async (userId: number): Promise<ProjectWithUser[]> => {
-        return prisma.project.findMany({
-            where: { userId },
+    getAll = async (userId: number, filters: ProjectQueryInput): Promise<ProjectListResult> => {
+        const total = await prisma.project.count({
+            where: { 
+                userId,
+                name: {
+                    contains: filters.search,
+                    mode: 'insensitive'
+                }
+            },
+        })
+        
+        const projects = await prisma.project.findMany({
+            where: { 
+                userId,
+                name: {
+                    contains: filters.search,
+                    mode: 'insensitive'
+                }
+            },
+            skip: (filters.page - 1) * filters.limit,
+            take: filters.limit,
+            orderBy: {
+                id: 'asc'
+            },
             include: {
                 user: {
                     select: {
@@ -29,6 +54,13 @@ export class ProjectService {
                 },
             },
         });
+
+        const returnObj = {
+            projects,
+            total
+        }
+
+        return returnObj
     };
 
     getById = async (userId: number, projectId: number): Promise<ProjectWithUser | null> => {

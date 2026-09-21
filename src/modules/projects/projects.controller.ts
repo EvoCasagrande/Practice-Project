@@ -4,6 +4,8 @@ import { validarParametro } from '../../utils/validarParametro.js';
 import type { UserParams } from "../users/users.controller.js";
 import type { UpdateProjectInput, CreateProjectInput } from './projects.schema.js';
 import { AppError } from '../../utils/AppError.js';
+import { projectQuerySchema } from './projects.schema.js';
+import { safeParse } from 'zod';
 
 export type UserProjectParams = {
     userId: string,
@@ -17,15 +19,25 @@ export class ProjectController {
         const userId = validarParametro(req.params.userId);
             
         if(userId === null) {
-            throw new AppError('El userId debe ser un entero positivo', 400);
+            throw new AppError('El userId debe ser un entero positivo y menor a 2147483648.', 400);
         }
 
-        const projects = await this.projectService.getAll(userId);
+        const query = safeParse(projectQuerySchema, req.query);
+
+        if(!query.success) {
+            throw new AppError(query.error.issues[0].message, 400)
+        }
+
+        const result = await this.projectService.getAll(userId, query.data);
 
         res.status(200).json({
             status: 'success',
-            results: projects.length,
-            projects
+            results: result.projects.length,
+            page: query.data.page,
+            limit: query.data.limit,
+            total: result.total,
+            totalPages: Math.ceil(result.total/query.data.limit) ,
+            projects: result.projects
         });
     }
 
@@ -34,7 +46,7 @@ export class ProjectController {
         const projectId = validarParametro(req.params.projectId);
 
         if(userId === null || projectId === null) {
-            throw new AppError('El userId y projectId deben ser un entero positivo.', 400);
+            throw new AppError('El userId y projectId deben ser un entero positivo y menor a 2147483648.', 400);
         }
 
         const project = await this.projectService.getById(userId, projectId);
@@ -53,7 +65,7 @@ export class ProjectController {
         const userId = validarParametro(req.params.userId);
 
         if(userId === null) {
-            throw new AppError('El userId debe ser un entero positivo.', 400);
+            throw new AppError('El userId debe ser un entero positivo y menor a 2147483648.', 400);
         }
 
         const project = await this.projectService.create(userId, req.body);
@@ -73,7 +85,7 @@ export class ProjectController {
         const projectId = validarParametro(req.params.projectId);
 
         if(userId === null || projectId === null) {
-            throw new AppError('El userId y projectId deben ser un entero positivo.', 400);
+            throw new AppError('El userId y projectId deben ser un entero positivo y menor a 2147483648.', 400);
         }
 
         const project = await this.projectService.update(userId, projectId, req.body);
@@ -89,7 +101,7 @@ export class ProjectController {
         const projectId = validarParametro(req.params.projectId);
 
         if(userId === null || projectId === null) {
-            throw new AppError('El userId y projectId deben ser un entero positivo.', 400);
+            throw new AppError('El userId y projectId deben ser un entero positivo y menor a 2147483648.', 400);
         }
 
         await this.projectService.delete(userId, projectId);

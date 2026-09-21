@@ -2,8 +2,9 @@ import type { Request, Response, NextFunction } from "express";
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import { jwtSecret } from "../config/env.js";
 import { AppError } from "../utils/AppError.js";
+import { prisma } from "../lib/prisma.js";
 
-export const autenticarUsuario = (req: Request, res: Response, next: NextFunction ) => {
+export const autenticarUsuario = async(req: Request, res: Response, next: NextFunction ) => {
     const encabezado = req.headers.authorization;
     const tieneBearer = encabezado?.startsWith('Bearer ')
 
@@ -29,8 +30,21 @@ export const autenticarUsuario = (req: Request, res: Response, next: NextFunctio
     if(typeof payload === 'string' || !(typeof payload.id === 'number')) {
         throw new AppError('Acceso no autorizado', 401);
     }
+    const user = await prisma.user.findUnique({
+        where: {id: payload.id},
+        select: {
+            id: true,
+            role: true
+        }
+    })
 
-    res.locals.userId = payload.id;
+    if(!user) {
+        throw new AppError('Acceso no autorizado', 401)
+    }
+
+    res.locals.role = user.role;
+
+    res.locals.userId = user.id;
     
     next()
 }

@@ -25,7 +25,7 @@ export class UserController {
             const userId = validarParametro(req.params.userId);
 
             if(userId === null) {
-                throw new AppError('El userId debe ser un entero positivo', 400)
+                throw new AppError('El userId debe ser un entero positivo y menor a 2147483648.', 400)
             }
 
             const user = await this.userService.getById(userId);
@@ -44,7 +44,7 @@ export class UserController {
             const userId = validarParametro(req.params.userId);
 
             if(userId === null) {
-                throw new AppError('El userId debe ser un entero positivo', 400)
+                throw new AppError('El userId debe ser un entero positivo y menor a 2147483648.', 400)
             }
 
             const user = await this.userService.update(userId, req.body);
@@ -59,7 +59,7 @@ export class UserController {
             const userId = validarParametro(req.params.userId);
 
             if(userId === null) {
-                throw new AppError('El userId debe ser un entero positivo', 400)
+                throw new AppError('El userId debe ser un entero positivo y menor a 2147483648.', 400)
             }
 
             await this.userService.delete(userId);
