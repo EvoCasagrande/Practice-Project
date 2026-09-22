@@ -42,7 +42,15 @@ export const projectQuerySchema = z.object({
         .int()
         .min(1, 'Limit debe ser un valor entero positivo')
         .max(100, 'Limit no debe superar el valor de 100')
-        .default(10)
+        .default(10),
+
+    sortBy: z
+        .enum(['name', 'id'])
+        .default('id'),
+
+    order: z
+        .enum(['asc', 'desc'])
+        .default('asc')
 })
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>

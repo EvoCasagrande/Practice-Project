@@ -45,7 +45,15 @@ export const taskQuerySchema = z.object({
         .int()
         .min(1, 'Limit debe ser un valor entero positivo')
         .max(100, 'Limit no debe superar el valor de 100')
-        .default(10)
+        .default(10),
+
+    sortBy: z
+        .enum(['title', 'id'])
+        .default('id'),
+
+    order: z
+        .enum(['asc', 'desc'])
+        .default('asc')
 });
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;

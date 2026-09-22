@@ -41,9 +41,11 @@ export class ProjectService {
             },
             skip: (filters.page - 1) * filters.limit,
             take: filters.limit,
-            orderBy: {
+            orderBy: [{
+                [filters.sortBy]: filters.order,
+            },{
                 id: 'asc'
-            },
+            }],
             include: {
                 user: {
                     select: {
