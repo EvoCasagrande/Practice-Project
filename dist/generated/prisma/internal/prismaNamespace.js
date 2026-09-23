@@ -84,7 +84,8 @@ export const UserScalarFieldEnum = {
     id: 'id',
     name: 'name',
     email: 'email',
-    passwordHash: 'passwordHash'
+    passwordHash: 'passwordHash',
+    role: 'role'
 };
 export const ProjectScalarFieldEnum = {
     id: 'id',

@@ -1,17 +1,56 @@
 import { prisma } from '../../lib/prisma.js';
 export class TaskService {
-    getAll = async (userId, projectId) => {
-        return prisma.task.findMany({
+    getAll = async (userId, projectId, filters) => {
+        const project = await prisma.project.findUnique({
+            where: {
+                id: projectId,
+                userId,
+            }
+        });
+        if (!project) {
+            return null;
+        }
+        const total = await prisma.task.count({
             where: {
                 projectId,
                 project: {
                     userId
+                },
+                completed: filters.completed,
+                title: {
+                    contains: filters.search,
+                    mode: 'insensitive'
                 }
             },
+        });
+        const tasks = await prisma.task.findMany({
+            where: {
+                projectId,
+                project: {
+                    userId
+                },
+                completed: filters.completed,
+                title: {
+                    contains: filters.search,
+                    mode: 'insensitive'
+                }
+            },
+            skip: (filters.page - 1) * filters.limit,
+            take: filters.limit,
+            orderBy: [{
+                    [filters.sortBy]: filters.order,
+                }, {
+                    id: 'asc'
+                }],
             include: {
                 project: true
             }
         });
+        const returnObj = {
+            tasks,
+            total
+        };
+        return returnObj;
     };
     getById = async (userId, projectId, taskId) => {
         return prisma.task.findUnique({

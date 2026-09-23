@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { jwtSecret } from "../config/env.js";
 import { AppError } from "../utils/AppError.js";
-export const autenticarUsuario = (req, res, next) => {
+import { prisma } from "../lib/prisma.js";
+export const autenticarUsuario = async (req, res, next) => {
     const encabezado = req.headers.authorization;
     const tieneBearer = encabezado?.startsWith('Bearer ');
     if (!tieneBearer) {
@@ -21,7 +22,18 @@ export const autenticarUsuario = (req, res, next) => {
     if (typeof payload === 'string' || !(typeof payload.id === 'number')) {
         throw new AppError('Acceso no autorizado', 401);
     }
-    res.locals.userId = payload.id;
+    const user = await prisma.user.findUnique({
+        where: { id: payload.id },
+        select: {
+            id: true,
+            role: true
+        }
+    });
+    if (!user) {
+        throw new AppError('Acceso no autorizado', 401);
+    }
+    res.locals.role = user.role;
+    res.locals.userId = user.id;
     next();
 };
 //# sourceMappingURL=autenticarUsuario.js.map

@@ -1,8 +1,30 @@
 import { prisma } from "../../lib/prisma.js";
 export class ProjectService {
-    getAll = async (userId) => {
-        return prisma.project.findMany({
-            where: { userId },
+    getAll = async (userId, filters) => {
+        const total = await prisma.project.count({
+            where: {
+                userId,
+                name: {
+                    contains: filters.search,
+                    mode: 'insensitive'
+                }
+            },
+        });
+        const projects = await prisma.project.findMany({
+            where: {
+                userId,
+                name: {
+                    contains: filters.search,
+                    mode: 'insensitive'
+                }
+            },
+            skip: (filters.page - 1) * filters.limit,
+            take: filters.limit,
+            orderBy: [{
+                    [filters.sortBy]: filters.order,
+                }, {
+                    id: 'asc'
+                }],
             include: {
                 user: {
                     select: {
@@ -13,6 +35,11 @@ export class ProjectService {
                 },
             },
         });
+        const returnObj = {
+            projects,
+            total
+        };
+        return returnObj;
     };
     getById = async (userId, projectId) => {
         return prisma.project.findUnique({
