@@ -7,11 +7,13 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "if exist dist rmdir /s /q dist && tsc",
+    "build": "npm run clean && prisma generate && tsc",
     "start": "node dist/src/server.js",
     "dev": "tsx watch src/server.ts",
-    "postinstall": "prisma skills sync || exit 0",
-    "test": "vitest"
+    "test": "vitest",
+    "clean": "rimraf dist",
+    "test:run": "vitest run",
+    "db:deploy": "prisma migrate deploy"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

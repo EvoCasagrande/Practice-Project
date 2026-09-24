@@ -1,6 +1,8 @@
 node_modules/
 .env
 .env.*
+/dist
+!.env.example
 
 # Prisma Client generado
 /generated/prisma/
